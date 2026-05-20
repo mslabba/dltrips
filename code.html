@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+
+<html class="scroll-smooth" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700&amp;family=Inter:wght@400;500;600&amp;family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        /* Custom scrollbar for premium feel */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f8f9ff; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 10px; }
+        ::-webkit-scrollbar-thumb:hover { background: #1e3a8a; }
+
+        @keyframes marquee {
+            0% { transform: translateX(0); }
+            100% { transform: translateX(-50%); }
+        }
+        .animate-marquee {
+            display: flex;
+            width: 200%;
+            animation: marquee 30s linear infinite;
+        }
+        .animate-marquee:hover {
+            animation-play-state: paused;
+        }
+
+        .carousel-item {
+            opacity: 0;
+            transition: opacity 1s ease-in-out;
+            position: absolute;
+            inset: 0;
+            z-index: 0;
+        }
+        .carousel-item.active {
+            opacity: 1;
+            z-index: 10;
+        }
+        
+        .modal-transition {
+            transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1), opacity 0.3s ease;
+        }
+
+        .dot.active {
+            background-color: #fd761a;
+            width: 2rem;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                      "inverse-surface": "#213145",
+                      "on-error": "#ffffff",
+                      "primary-container": "#1e3a8a",
+                      "on-primary-fixed": "#00164e",
+                      "primary-fixed-dim": "#b6c4ff",
+                      "on-primary-container": "#90a8ff",
+                      "surface-container-high": "#dce9ff",
+                      "on-background": "#0b1c30",
+                      "tertiary-container": "#3d4143",
+                      "surface": "#f8f9ff",
+                      "outline": "#757682",
+                      "surface-container-highest": "#d3e4fe",
+                      "surface-variant": "#d3e4fe",
+                      "on-tertiary-fixed-variant": "#444749",
+                      "error-container": "#ffdad6",
+                      "surface-container": "#e5eeff",
+                      "tertiary-fixed-dim": "#c4c7c9",
+                      "error": "#ba1a1a",
+                      "surface-container-low": "#eff4ff",
+                      "secondary-container": "#fd761a",
+                      "on-primary": "#ffffff",
+                      "tertiary-fixed": "#e0e3e5",
+                      "on-surface": "#0b1c30",
+                      "primary": "#00236f",
+                      "surface-dim": "#cbdbf5",
+                      "on-tertiary": "#ffffff",
+                      "on-secondary": "#ffffff",
+                      "background": "#f8f9ff",
+                      "tertiary": "#272b2d",
+                      "surface-container-lowest": "#ffffff",
+                      "outline-variant": "#c5c5d3",
+                      "secondary-fixed": "#ffdbca",
+                      "on-secondary-fixed": "#341100",
+                      "surface-bright": "#f8f9ff",
+                      "inverse-on-surface": "#eaf1ff",
+                      "on-surface-variant": "#444651",
+                      "on-secondary-container": "#5c2400",
+                      "on-tertiary-container": "#aaadaf",
+                      "on-error-container": "#93000a",
+                      "on-secondary-fixed-variant": "#783200",
+                      "secondary": "#9d4300",
+                      "inverse-primary": "#b6c4ff",
+                      "secondary-fixed-dim": "#ffb690",
+                      "primary-fixed": "#dce1ff",
+                      "on-tertiary-fixed": "#191c1e",
+                      "on-primary-fixed-variant": "#264191",
+                      "surface-tint": "#4059aa"
+              },
+              "borderRadius": {
+                      "DEFAULT": "0.25rem",
+                      "lg": "0.5rem",
+                      "xl": "0.75rem",
+                      "full": "9999px"
+              },
+              "spacing": {
+                      "container-max": "1280px",
+                      "stack-sm": "12px",
+                      "gutter": "24px",
+                      "margin-desktop": "40px",
+                      "margin-mobile": "16px",
+                      "stack-md": "24px",
+                      "base": "8px",
+                      "stack-lg": "48px"
+              },
+              "fontFamily": {
+                      "display-lg-mobile": ["Montserrat"],
+                      "label-md": ["Inter"],
+                      "display-lg": ["Montserrat"],
+                      "body-lg": ["Inter"],
+                      "headline-md": ["Montserrat"],
+                      "body-md": ["Inter"],
+                      "label-sm": ["Inter"],
+                      "headline-sm": ["Montserrat"]
+              },
+              "fontSize": {
+                      "display-lg-mobile": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.01em", "fontWeight": "700"}],
+                      "label-md": ["14px", {"lineHeight": "20px", "letterSpacing": "0.01em", "fontWeight": "500"}],
+                      "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+                      "body-lg": ["18px", {"lineHeight": "28px", "fontWeight": "400"}],
+                      "headline-md": ["30px", {"lineHeight": "38px", "fontWeight": "600"}],
+                      "body-md": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+                      "label-sm": ["12px", {"lineHeight": "16px", "fontWeight": "600"}],
+                      "headline-sm": ["24px", {"lineHeight": "32px", "fontWeight": "600"}]
+              }
+            },
+          },
+        }
+      </script>
+</head>
+<body class="bg-surface font-body-md text-on-surface">
+<!-- TopNavBar -->
+<header class="bg-surface/80 dark:bg-surface-container-lowest/80 backdrop-blur-md shadow-sm docked full-width top-0 sticky z-50 h-20">
+<div class="flex justify-between items-center w-full px-margin-desktop max-w-container-max mx-auto h-full">
+<div class="text-headline-sm font-display-lg text-primary tracking-tight">DL Trips</div>
+<nav class="hidden md:flex items-center space-x-gutter">
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-all duration-300" href="#features">Features</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-all duration-300" href="#how-it-works">How it Works</a>
+<a class="font-label-md text-label-md text-on-surface-variant hover:text-secondary transition-all duration-300" href="#about">About Us</a>
+</nav>
+<button class="bg-primary-container text-on-primary px-6 py-2 rounded-lg font-label-md text-label-md hover:scale-95 transition-transform duration-200" onclick="openModal()">
+            Join Now
+        </button>
+</div>
+</header>
+<main>
+<!-- Interactive Hero Carousel -->
+<section class="relative h-[700px] lg:h-[870px] w-full overflow-hidden" id="hero-carousel">
+<!-- Slide 1: Brand Introduction -->
+<div class="carousel-item active" id="slide-1">
+<img alt="Global Experiences" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0uiq1TMe7v9haKpy0TaypeWQJO5aTMy_5nIJB4FKrnJXSjDrye6NqwR-32AnFwbV_bg6pSeF3xnWzitHsMrZL-B2CnqHs3_qaYVoO9ohMbXZNDGAmMCgKQDp77F4lSMFc1HBx8ZNw08eDOqLExFnPKoztOwVQEFQNJjA7W3blizKUqvcGSjpFmYFzK1Am07VI1iZrgbz6vnHjSRsG-rXmoglQUVPFzexXdSlUanJVz52_NWTokMDvp4x-b0"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 flex items-center px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl text-white">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-sm drop-shadow-md">Global Experiences. World-Class Service.</h1>
+<p class="font-body-lg text-body-lg mb-stack-md opacity-90">Explore the world seamlessly with flexible payments, smart rewards, and premium booking services.</p>
+<button class="bg-secondary-container text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-105 transition-all duration-300 shadow-lg" onclick="openModal()">
+                        Start Your Journey
+                    </button>
+</div>
+</div>
+</div>
+<!-- Slide 2: Flexible EMI -->
+<div class="carousel-item" id="slide-2">
+<img alt="Travel Now, Pay Later" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0uhUPWecqThGrUOrZR6DD083JMKjSYmZZM9CnK6sI4tdpKe8uvrAqm-4HSY4MvjK-X-V4o6r77nq5tTjnVDFv0vlDjCfkiDpbeK_7SUnHlD2LspHTTf5rKhCVxt7azj93Sdw11mic0o2bdDlQsKMuTbXCtVbol841bU-xdSByhSBddPSdUcBE6PsJQ9ts2l7rRqafzb7ZlCZ0yrYY1ONqxa4SoZ6doUFh8i3pXdTWq0SQL-dcufImOycaYI"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 flex items-center px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl text-white">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-sm drop-shadow-md">Travel Now, Pay Later</h1>
+<p class="font-body-lg text-body-lg mb-stack-md opacity-90">Fulfill your wanderlust without financial stress. Access flexible and easy EMI options for all bookings.</p>
+<button class="bg-secondary-container text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-105 transition-all duration-300 shadow-lg" onclick="openModal()">
+                        Start Now
+                    </button>
+</div>
+</div>
+</div>
+<!-- Slide 3: Lifetime Referrals -->
+<div class="carousel-item" id="slide-3">
+<img alt="Earn for a Lifetime" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0uhGl3WtQ-LJ4xSbLpfjGD8JnlrUufdywLOXxahMFJLLlT88zV5aoHWcB6w5AGrqOFBBT-UsWJnD_OTBop4imaDvGCk0W7Lvlx91h6D9JUwAbws9ppBKl3OcEpISjiJMjzWhJdK9bitj5me9Bx0cvGAEHXy1Jb2SHAsJq8TUQ8hP75oUZgtyefWBbZh4E5GW83lCVhdv2d1ZhEBaW1sjRUHiKdz2o6Va33JC8Lc1E0nUJzksdNtJNmmrseA"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 flex items-center px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl text-white">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-sm drop-shadow-md">Earn for a Lifetime</h1>
+<p class="font-body-lg text-body-lg mb-stack-md opacity-90">Invite your network and unlock lifetime commissions and exclusive benefits every time they travel.</p>
+<button class="bg-secondary-container text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-105 transition-all duration-300 shadow-lg" onclick="openModal()">
+                        Start Now
+                    </button>
+</div>
+</div>
+</div>
+<!-- Slide 4: Digital Wallet -->
+<div class="carousel-item" id="slide-4">
+<img alt="Smart Digital Wallet" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida/ADBb0ui3wvwR-RX65ZbieI5bahcD6p1VG2HafmcNDZpF41U3ydGkDfVcpSCK1j2Da-coBOW4V8aDZatr2dxwRD7RS_vrnbAgIhIxxgCI0C6204gGpF9JKUQwg89-KxKvTYEsdAmSUJFU3ULsNSmqNKsLrTr9SnFXu-voxwEDVFqg3ZaJzNlNjxhJj44LKHw4VGU69gK-oxuHc_LhPmY3JjNjz9aYyKgAH9smZw2cl4lcAjWGX4OuRXhNzMYodA"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 flex items-center px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl text-white">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-sm drop-shadow-md">Smart Digital Wallet</h1>
+<p class="font-body-lg text-body-lg mb-stack-md opacity-90">Manage your bookings, track referral payouts, and enjoy instant cashbacks through a highly secure in-app wallet.</p>
+<button class="bg-secondary-container text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-105 transition-all duration-300 shadow-lg" onclick="openModal()">
+                        Start Now
+                    </button>
+</div>
+</div>
+</div>
+<!-- Slide 5: Global Bookings -->
+<div class="carousel-item" id="slide-5">
+<img alt="Global Inventory" class="w-full h-full object-cover" src="https://lh3.googleusercontent.com/aida-public/AB6AXuDEu3Evj9r-eRcuurjDWOJlV5MA2cVKJWg8zzeoQpAmhsCwPgF_7g_PGQ7g6m5Ae8KcmPo__vVxfCzMBYseNCP_9e634D5g5rGaTpkDSO8oS2JH1n6aG8WDsth54D3tqX1RziNXbb4DQiI8jYJ8rrcmKfWVTNOfCdUC6bNPBuc6YUjAW2MpCP5shZP5G5bXkE3PFXJ51FouJtLtA8QP7SsX-cl5ExIl6nKalaRlR5igViH9GCLdxaK1o7O-Cg1bVbS7JdMmDhoBxxg"/>
+<div class="absolute inset-0 bg-gradient-to-r from-primary/80 via-primary/40 to-transparent"></div>
+<div class="absolute inset-0 flex items-center px-margin-desktop max-w-container-max mx-auto w-full">
+<div class="max-w-2xl text-white">
+<h1 class="font-display-lg text-display-lg-mobile md:text-display-lg mb-stack-sm drop-shadow-md">Global Inventory</h1>
+<p class="font-body-lg text-body-lg mb-stack-md opacity-90">Access real-time, highly competitive rates for flights, hotels, and holiday packages across the globe.</p>
+<button class="bg-secondary-container text-on-primary px-8 py-4 rounded-xl font-headline-sm text-headline-sm hover:scale-105 transition-all duration-300 shadow-lg" onclick="openModal()">
+                        Start Now
+                    </button>
+</div>
+</div>
+</div>
+<!-- Carousel Controls -->
+<div class="absolute inset-y-0 left-0 flex items-center pl-4 z-20">
+<button class="p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-colors" onclick="prevSlide()">
+<span class="material-symbols-outlined text-3xl">chevron_left</span>
+</button>
+</div>
+<div class="absolute inset-y-0 right-0 flex items-center pr-4 z-20">
+<button class="p-2 rounded-full bg-black/20 text-white hover:bg-black/40 transition-colors" onclick="nextSlide()">
+<span class="material-symbols-outlined text-3xl">chevron_right</span>
+</button>
+</div>
+<!-- Dots -->
+<div class="absolute bottom-10 left-1/2 -translate-x-1/2 flex space-x-3 z-20">
+<button class="dot active w-3 h-3 rounded-full bg-white/50 transition-all duration-300" onclick="goToSlide(0)"></button>
+<button class="dot w-3 h-3 rounded-full bg-white/50 transition-all duration-300" onclick="goToSlide(1)"></button>
+<button class="dot w-3 h-3 rounded-full bg-white/50 transition-all duration-300" onclick="goToSlide(2)"></button>
+<button class="dot w-3 h-3 rounded-full bg-white/50 transition-all duration-300" onclick="goToSlide(3)"></button>
+<button class="dot w-3 h-3 rounded-full bg-white/50 transition-all duration-300" onclick="goToSlide(4)"></button>
+</div>
+</section>
+<!-- USP Slider (Marquee) -->
+<section class="bg-surface-container py-stack-md overflow-hidden border-b border-outline-variant/10">
+<div class="animate-marquee">
+<!-- Original Set -->
+<div class="flex shrink-0 px-gutter items-center justify-around min-w-full">
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">credit_card</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Travel Now, Pay Later</p>
+<p class="text-[10px] text-on-surface-variant">Flexible EMI options</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">currency_exchange</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Earn for a Lifetime</p>
+<p class="text-[10px] text-on-surface-variant">Global rewards network</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">account_balance_wallet</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Smart Digital Wallet</p>
+<p class="text-[10px] text-on-surface-variant">Secure global payments</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">public</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Global Inventory</p>
+<p class="text-[10px] text-on-surface-variant">500k+ Destinations</p>
+</div>
+</div>
+</div>
+<!-- Duplicate Set for Loop -->
+<div class="flex shrink-0 px-gutter items-center justify-around min-w-full">
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">credit_card</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Travel Now, Pay Later</p>
+<p class="text-[10px] text-on-surface-variant">Flexible EMI options</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">currency_exchange</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Earn for a Lifetime</p>
+<p class="text-[10px] text-on-surface-variant">Global rewards network</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">account_balance_wallet</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Smart Digital Wallet</p>
+<p class="text-[10px] text-on-surface-variant">Secure global payments</p>
+</div>
+</div>
+<div class="flex items-center space-x-4 bg-surface-container-lowest p-4 rounded-xl shadow-sm border border-outline-variant/30 w-72">
+<span class="material-symbols-outlined text-secondary text-4xl">public</span>
+<div>
+<p class="font-label-md text-label-md text-on-surface">Global Inventory</p>
+<p class="text-[10px] text-on-surface-variant">500k+ Destinations</p>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- How It Works -->
+<section class="py-stack-lg px-margin-desktop max-w-container-max mx-auto" id="how-it-works">
+<div class="text-center mb-stack-lg">
+<h2 class="font-headline-md text-headline-md text-primary mb-4">Your Journey, Simplified</h2>
+<div class="h-1 w-20 bg-secondary-container mx-auto rounded-full"></div>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Step 1 -->
+<div class="group p-stack-md bg-white border border-outline-variant/20 rounded-2xl hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute -top-4 -right-4 w-24 h-24 bg-surface-container-high rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<div class="w-12 h-12 bg-primary text-white rounded-lg flex items-center justify-center mb-6 font-display-lg text-headline-sm">1</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Discover &amp; Plan</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Access curated global itineraries and luxury stays tailored to your unique preferences.</p>
+</div>
+</div>
+<!-- Step 2 -->
+<div class="group p-stack-md bg-white border border-outline-variant/20 rounded-2xl hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute -top-4 -right-4 w-24 h-24 bg-secondary-fixed rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<div class="w-12 h-12 bg-secondary text-white rounded-lg flex items-center justify-center mb-6 font-display-lg text-headline-sm">2</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Book with Ease &amp; EMI</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Zero-stress booking with flexible Micro-EMI options that fit your monthly budget perfectly.</p>
+</div>
+</div>
+<!-- Step 3 -->
+<div class="group p-stack-md bg-white border border-outline-variant/20 rounded-2xl hover:shadow-xl transition-all duration-300 relative overflow-hidden">
+<div class="absolute -top-4 -right-4 w-24 h-24 bg-primary-fixed rounded-full opacity-50 group-hover:scale-150 transition-transform duration-500"></div>
+<div class="relative z-10">
+<div class="w-12 h-12 bg-on-tertiary-fixed-variant text-white rounded-lg flex items-center justify-center mb-6 font-display-lg text-headline-sm">3</div>
+<h3 class="font-headline-sm text-headline-sm text-on-surface mb-3">Travel &amp; Earn</h3>
+<p class="font-body-md text-body-md text-on-surface-variant">Earn points on every mile traveled. Redeem rewards for future journeys and community perks.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- About Us -->
+<section class="bg-surface-container-low py-stack-lg" id="about">
+<div class="px-margin-desktop max-w-container-max mx-auto grid grid-cols-1 md:grid-cols-2 gap-stack-lg items-center">
+<div class="relative">
+<div class="absolute -inset-4 bg-secondary/10 blur-3xl rounded-full"></div>
+<img alt="Global travelers" class="relative rounded-3xl shadow-2xl z-10" src="https://lh3.googleusercontent.com/aida-public/AB6AXuB9qBldp7LlfakBd4yP_Izor5YRgeymkJQzbpFZJUo6QPPDVP4a1qAWbGTcCMzPedu74U0knPL2B1Q9uAYyfiDCopUc28Jc5nL67oBieIexbzoI7Ggb18Mc74d0CbHorWZZJ4CjfzHck37pPwRcUDMcrO5A-nooA2maxFzvAcSWJG2j7rv3oHXgnLkjdwa48n0YZPzg4YV72HpMAwztnltbLUc1qjqLrlq3kRQvFsraZnNyvo-em5u_IklhvPJHxlJ5fucA86i8eAo"/>
+</div>
+<div class="space-y-stack-md">
+<h2 class="font-display-lg text-display-lg text-primary">Micro-EMIs for Global Dreams</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">DL Trips was born from a simple belief: Luxury travel should be accessible, not just aspirational. Our innovative Micro-EMI model allows you to lock in today's best prices while paying over time.</p>
+<div class="space-y-4">
+<div class="flex items-start space-x-4">
+<span class="material-symbols-outlined text-secondary">verified</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Community-Driven Rewards</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Earn more when you travel with friends or share your global experiences.</p>
+</div>
+</div>
+<div class="flex items-start space-x-4">
+<span class="material-symbols-outlined text-secondary">security</span>
+<div>
+<h4 class="font-label-md text-label-md text-on-surface">Uncompromising Security</h4>
+<p class="font-body-md text-body-md text-on-surface-variant">Your bookings and wallets are protected by bank-grade encryption systems.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+<!-- Final CTA Banner -->
+<section class="px-margin-desktop max-w-container-max mx-auto my-stack-lg">
+<div class="bg-primary p-stack-lg rounded-[2rem] text-center relative overflow-hidden shadow-2xl">
+<div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -translate-y-1/2 translate-x-1/2"></div>
+<div class="relative z-10">
+<h2 class="font-display-lg text-display-lg text-white mb-stack-sm">Ready to See the World?</h2>
+<p class="text-white/80 font-body-lg text-body-lg mb-stack-md max-w-xl mx-auto">Join thousands of travelers who are redefining what it means to explore.</p>
+<button class="bg-secondary-container text-on-primary px-10 py-4 rounded-xl font-headline-sm text-headline-sm hover:bg-secondary transition-all hover:scale-105" onclick="openModal()">
+                    Join DL Trips
+                </button>
+</div>
+</div>
+</section>
+</main>
+<!-- Footer -->
+<footer class="bg-inverse-surface text-surface-variant">
+<div class="w-full py-stack-lg px-margin-desktop max-w-container-max mx-auto flex flex-col md:flex-row justify-between border-t border-outline-variant/20">
+<div class="mb-stack-md md:mb-0">
+<div class="text-headline-sm font-display-lg text-surface-container-lowest mb-4">DL Trips</div>
+<p class="font-label-sm text-label-sm max-w-xs text-on-tertiary-container">Empowering the world to travel through smart financing and global community rewards.</p>
+</div>
+<div class="grid grid-cols-2 md:grid-cols-4 gap-gutter">
+<div class="flex flex-col space-y-2">
+<span class="text-white font-label-md mb-2">Company</span>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">About Us</a>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">Contact Us</a>
+</div>
+<div class="flex flex-col space-y-2">
+<span class="text-white font-label-md mb-2">Legal</span>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">Privacy Policy</a>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">Terms of Service</a>
+</div>
+<div class="flex flex-col space-y-2">
+<span class="text-white font-label-md mb-2">Social</span>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">Instagram</a>
+<a class="font-label-sm text-label-sm text-on-tertiary-container hover:text-secondary-fixed transition-colors" href="#">LinkedIn</a>
+</div>
+</div>
+</div>
+<div class="px-margin-desktop max-w-container-max mx-auto py-4 border-t border-outline-variant/10 text-center md:text-left font-label-sm text-label-sm text-on-tertiary-container">
+        © 2024 DL Trips. All rights reserved.
+    </div>
+</footer>
+<!-- Interactive Sign-Up Modal -->
+<div class="hidden fixed inset-0 z-[100] flex items-center justify-center px-4 transition-opacity duration-300 opacity-0" id="signup-modal">
+<div class="absolute inset-0 bg-primary/60 backdrop-blur-sm" onclick="closeModal()"></div>
+<div class="bg-white w-full max-w-md rounded-2xl shadow-2xl relative z-10 overflow-hidden modal-transition translate-y-8" id="modal-content">
+<div class="bg-primary p-6 text-white relative">
+<button class="absolute top-4 right-4 hover:rotate-90 transition-transform" onclick="closeModal()">
+<span class="material-symbols-outlined">close</span>
+</button>
+<h3 class="font-display-lg text-headline-sm">Create Your Account</h3>
+<p class="text-white/70 font-label-sm">Join the DL Trips global community today.</p>
+</div>
+<form class="p-8 space-y-stack-md" onsubmit="event.preventDefault()">
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Full Name</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="John Doe" required="" type="text"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Email Address</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="john@example.com" required="" type="email"/>
+</div>
+<div class="space-y-1">
+<label class="font-label-md text-label-md text-on-surface">Password</label>
+<input class="w-full px-4 py-3 rounded-lg border border-outline-variant focus:ring-2 focus:ring-primary focus:border-transparent transition-all outline-none" placeholder="••••••••" required="" type="password"/>
+</div>
+<div class="pt-2">
+<button class="w-full bg-secondary-container text-on-primary py-4 rounded-xl font-headline-sm text-headline-sm hover:shadow-lg transition-all hover:bg-secondary">
+                    Create Account
+                </button>
+</div>
+<p class="text-center font-label-sm text-label-sm text-on-surface-variant">
+                Already have an account? <a class="text-primary font-bold hover:underline" href="#">Sign In</a>
+</p>
+</form>
+</div>
+</div>
+<script>
+    // Carousel Logic
+    let currentSlide = 0;
+    const slides = document.querySelectorAll('.carousel-item');
+    const dots = document.querySelectorAll('.dot');
+    const totalSlides = slides.length;
+    let slideInterval;
+
+    function showSlide(index) {
+        slides.forEach(slide => slide.classList.remove('active'));
+        dots.forEach(dot => dot.classList.remove('active'));
+        
+        slides[index].classList.add('active');
+        dots[index].classList.add('active');
+        currentSlide = index;
+    }
+
+    function nextSlide() {
+        currentSlide = (currentSlide + 1) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    function prevSlide() {
+        currentSlide = (currentSlide - 1 + totalSlides) % totalSlides;
+        showSlide(currentSlide);
+    }
+
+    function goToSlide(index) {
+        showSlide(index);
+        resetInterval();
+    }
+
+    function startInterval() {
+        slideInterval = setInterval(nextSlide, 5000);
+    }
+
+    function resetInterval() {
+        clearInterval(slideInterval);
+        startInterval();
+    }
+
+    // Pause on hover
+    const carouselContainer = document.getElementById('hero-carousel');
+    carouselContainer.addEventListener('mouseenter', () => clearInterval(slideInterval));
+    carouselContainer.addEventListener('mouseleave', startInterval);
+
+    // Initial start
+    startInterval();
+
+    // Modal Logic
+    function openModal() {
+        const modal = document.getElementById('signup-modal');
+        const content = document.getElementById('modal-content');
+        modal.classList.remove('hidden');
+        setTimeout(() => {
+            modal.classList.remove('opacity-0');
+            content.classList.remove('translate-y-8');
+        }, 10);
+    }
+
+    function closeModal() {
+        const modal = document.getElementById('signup-modal');
+        const content = document.getElementById('modal-content');
+        modal.classList.add('opacity-0');
+        content.classList.add('translate-y-8');
+        setTimeout(() => {
+            modal.classList.add('hidden');
+        }, 300);
+    }
+</script>
+</body></html>
